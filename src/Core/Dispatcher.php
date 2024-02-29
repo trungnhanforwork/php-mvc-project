@@ -16,23 +16,42 @@ class Dispatcher {
     if ($params === false) {
       exit("No route matched!");
     }
+    // print_r($params);
+    // exit("match");
 
-    $controller = $params["controller"];
-    $controllerClassName = "App\Controllers\\" . ucfirst($controller) . "Controller";
-    $action = $params["action"];
 
-    $parameter = $this->getActionArguments($controllerClassName,$action, $params);
-    echo $parameter;
+    $controller = $this->getControllerName($params);  
+    $action = $this->getActionName($params);
+    
 
-    $controller_object = new $controllerClassName;
-    $controller_object->$action();
+    // exit($controller . "</br>" . $action);
+    $agrs = $this->getActionArguments($controller,$action, $params);
+    $controller_object = new $controller;
+    $controller_object->$action(...$agrs);
   }
 
-  private function getActionArguments($controllerClassName, $action, $params) {
+  private function getActionArguments($controller, $action, $params) {
     $agrs = [];
-    $method = new ReflectionMethod($controllerClassName, $action);
+    $method = new ReflectionMethod($controller, $action);
     foreach ($method->getParameters() as $parameter) {
-      
+      $name = $parameter->getName();
+      $agrs[$name] = $params[$name];
     }
+    return $agrs;
+  }
+
+  private function getControllerName($params) {
+    $controller = $params["controller"];
+    $controller = str_replace("-","",ucwords(strtolower($controller), "-")) . "Controller";
+    $namespace = "App\Controllers";
+    if (array_key_exists("namespace", $params)) {
+      $namespace .= "\\" . $params["namespace"]; 
+    }
+    return $namespace . "\\". $controller; 
+  }
+  private function getActionName($params) {
+    $action = $params["action"];
+    $action = lcfirst(str_replace("-","",ucwords($action, "-")));
+    return $action; 
   }
 }

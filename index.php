@@ -25,17 +25,15 @@ spl_autoload_register(function (string $className) {
 
 
 $router = new Core\Router;
-$router->add("/category/{slug:[\w-]+}", ["controller" => "category", "action" => "show"]);
-$router->add("/{controller}/{action}/{id:\d+}");
 $router->add("/", ["controller" => "home", "action" => "index"]);
 $router->add("/home/index", ["controller" => "home", "action"=>"index"]);
-$router->add("/category/", ["controller" => "category", "action"=>"index"]);
+$router->add("/category", ["controller" => "category", "action"=>"index"]);
 $router->add("/category/index", ["controller" => "category", "action"=>"index"]);
-$router->add("/category/show");
+$router->add("/category/show",["controller" => "category", "action"=>"show"]);
+$router->add("/category/{slug:[\w-]+}", ["controller" => "category", "action" => "show"]);
+$router->add("/admin/{controller}/{action}",["namespace" => "Admin"]);
 $router->add("/{controller}/{action}");
-
-
-
+$router->add("/{controller}/{action}/{id:\d+}");
 
 $dispatcher = new Core\Dispatcher($router);
 $dispatcher->handle($path);
