@@ -1,16 +1,26 @@
 <?php
 namespace App\Controllers;
 use \App\Models\Category;
+use Core\Viewer;
+
 class CategoryController {
   public function index() {
     // require "src/Models/Category.php";
     $category = new Category;
     $categories = $category->getData();
-    require "Views/CategoryIndex.php";
+    $viewer = new Viewer;
+    echo $viewer->render("shared/header.php");
+
+    echo $viewer->render("Category/index.php", [
+      "categories" => $categories
+    ]);
   }
 
   public function show(string $id) {
-    
-    require "Views/CategoryShow.php";
+    $viewer = new Viewer;
+    echo $viewer->render("shared/header.php");
+    echo $viewer->render("Category/show.php", [
+      "id" => $id
+    ]);
   }
 }

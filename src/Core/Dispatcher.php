@@ -22,23 +22,22 @@ class Dispatcher {
 
     $controller = $this->getControllerName($params);  
     $action = $this->getActionName($params);
-    
-
-    // exit($controller . "</br>" . $action);
-    $agrs = $this->getActionArguments($controller,$action, $params);
     $controller_object = new $controller;
+     
+    $agrs = $this->getActionArguments($controller,$action, $params);
+
     $controller_object->$action(...$agrs);
   }
 
-  private function getActionArguments($controller, $action, $params) {
+  private function getActionArguments($controller, $action, $params): array {
     $agrs = [];
     $method = new ReflectionMethod($controller, $action);
     foreach ($method->getParameters() as $parameter) {
-      $name = $parameter->getName();
-      $agrs[$name] = $params[$name];
+        $name = $parameter->getName();
+        $agrs[$name] = $params[$name];
     }
     return $agrs;
-  }
+}
 
   private function getControllerName($params) {
     $controller = $params["controller"];
