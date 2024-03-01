@@ -1,14 +1,15 @@
 <?php
 use ReflectionMethod;
 namespace Core;
-
 use ReflectionMethod;
 
 class Dispatcher {
   private Router $router;
-  public function __construct(Router $router)
+  private Container $container;
+  public function __construct(Router $router, Container $container)
   {
     $this->router = $router;
+    $this->container = $container;
   }
 
   public function handle(string $path) {
@@ -22,11 +23,13 @@ class Dispatcher {
 
     $controller = $this->getControllerName($params);  
     $action = $this->getActionName($params);
-    $controller_object = new $controller;
-     
-    $agrs = $this->getActionArguments($controller,$action, $params);
 
-    $controller_object->$action(...$agrs);
+    $controller_object = $this->container->get($controller);
+     
+    $args = $this->getActionArguments($controller,$action, $params);
+    // $args = array_values($args);
+    call_user_func_array([$controller_object, $action], $args);
+    
   }
 
   private function getActionArguments($controller, $action, $params): array {
@@ -53,4 +56,5 @@ class Dispatcher {
     $action = lcfirst(str_replace("-","",ucwords($action, "-")));
     return $action; 
   }
+  
 }

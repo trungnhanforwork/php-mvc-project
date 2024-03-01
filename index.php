@@ -1,4 +1,7 @@
 <?php
+
+use Core\Database;
+
 $request_uri = $_SERVER["REQUEST_URI"];
 
 $base_dir = '/php-mvc-project';
@@ -36,6 +39,10 @@ $router->add("/admin/{controller}/{action}",["namespace" => "Admin"]);
 $router->add("/", ["controller" => "home", "action" => "index"]);
 
 $router->add("/{controller}/{action}");
+$container = new Core\Container;
 
-$dispatcher = new Core\Dispatcher($router);
+$container->set(Core\Database::class, function() {
+  return new Database("localhost","root","mysql", "lms", "3306");
+});
+$dispatcher = new Core\Dispatcher($router, $container);
 $dispatcher->handle($path);

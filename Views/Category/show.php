@@ -1,3 +1,3 @@
-show the category with id
+show the category with id: <?= $id;?>
 </body>
 </html>
