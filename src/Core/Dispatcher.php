@@ -1,6 +1,7 @@
 <?php
-use ReflectionMethod;
+
 namespace Core;
+use Core\Exceptions\PageNotFoundException;
 use ReflectionMethod;
 
 class Dispatcher {
@@ -15,7 +16,7 @@ class Dispatcher {
   public function handle(string $path) {
     $params = $this->router->match($path);
     if ($params === false) {
-      exit("No route matched!");
+      throw new PageNotFoundException("No route matched with path: $path!");
     }
     // print_r($params);
     // exit("match");
